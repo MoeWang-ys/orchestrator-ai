@@ -127,15 +127,32 @@ def _extract_json(text: str) -> dict:
     return json.loads(text)
 
 
+def encode_image(path: str) -> str:
+    """将图片文件编码为 data:image URI。"""
+    import base64
+    ext = Path(path).suffix.lower().lstrip(".")
+    mime = {"png": "image/png", "jpg": "image/jpeg", "jpeg": "image/jpeg", "gif": "image/gif", "webp": "image/webp"}.get(ext, "image/png")
+    data = base64.b64encode(Path(path).read_bytes()).decode("utf-8")
+    return f"data:{mime};base64,{data}"
+
+
 def call_api(prompt: str, system_prompt: str, model: str,
              api_endpoint: str, api_key: str,
              output_dir: Path = None, label: str = "output",
-             json_schema: dict = None, timeout: int = 600) -> dict:
-    """调用 OpenAI 兼容 API（如小米 MiMo），返回解析后的 JSON。"""
+             json_schema: dict = None, timeout: int = 600,
+             images: list = None) -> dict:
+    """调用 OpenAI 兼容 API，支持多模态（images 参数传图片路径列表）。"""
     import urllib.request
     import urllib.error
 
-    messages = [{"role": "system", "content": system_prompt}, {"role": "user", "content": prompt}]
+    if images:
+        content = [{"type": "text", "text": prompt}]
+        for img in images:
+            uri = encode_image(img) if Path(img).exists() else img
+            content.append({"type": "image_url", "image_url": {"url": uri}})
+        messages = [{"role": "system", "content": system_prompt}, {"role": "user", "content": content}]
+    else:
+        messages = [{"role": "system", "content": system_prompt}, {"role": "user", "content": prompt}]
     body = {"model": model, "messages": messages, "temperature": 0.3}
     if json_schema:
         body["response_format"] = {"type": "json_schema", "json_schema": {"name": "output", "schema": json_schema}}
@@ -430,7 +447,9 @@ def main():
 
         # ② 检查 Worker
         check_prompt = build_check_prompt(checklist, production_result)
-        print(f"② 检查 Worker")
+        # 提取生产输出中的图片路径，供多模态检查使用
+        check_images = production_result.get("images", []) if isinstance(production_result, dict) else []
+        print(f"② 检查 Worker" + (f" (多模态, {len(check_images)} 图)" if check_images else ""))
         write_progress(base_output_dir, status="running", current_round=round_num,
                        max_rounds=max_rounds, phase="check_worker",
                        rounds=rounds_summary)
@@ -449,7 +468,8 @@ def main():
                         check_prompt, CHECK_SYSTEM_PROMPT,
                         model=check_model, api_endpoint=api_endpoint, api_key=api_key,
                         output_dir=round_dir, label="check",
-                        json_schema=CHECK_SCHEMA, timeout=worker_timeout
+                        json_schema=CHECK_SCHEMA, timeout=worker_timeout,
+                        images=check_images if check_images else None
                     )
                 else:
                     check_result = call_claude(
