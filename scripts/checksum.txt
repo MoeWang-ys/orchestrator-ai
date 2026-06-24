@@ -1,0 +1,4 @@
+{
+  "scripts/loop.py": "2e39a5301cd7c605d4e228754683fe3983c5b1d019537d8550f296e5b2c01709",
+  "scripts/judge.py": "e521181be2eb65a9cf0a52bb6b76c57fb7369bcf635bb3ad4113a1625d63d2be"
+}

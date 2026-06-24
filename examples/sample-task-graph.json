@@ -1,0 +1,113 @@
+{
+  "spec_ref": "run_output/spec.json",
+  "layers": [
+    {
+      "layer": 1,
+      "parallel": true,
+      "couples": [
+        {
+          "couple_id": "search-github",
+          "prod_worker": {
+            "name": "prod-worker-github",
+            "task": "搜索 Zara Zhang 的 GitHub 开源项目数据。获取仓库名、stars、forks、主要语言、贡献者数量。结果写入 run_output/data_github.json",
+            "output_file": "run_output/data_github.json",
+            "depends_on": [],
+            "timeout_seconds": 300
+          },
+          "check_worker": {
+            "name": "check-worker-github",
+            "checklist": [
+              "数据是否包含仓库名",
+              "stars 数字是否准确",
+              "forks 数字是否准确",
+              "是否包含主要语言信息",
+              "JSON 格式是否有效"
+            ],
+            "output_file": "run_output/check_github.json",
+            "timeout_seconds": 180
+          },
+          "criteria": {
+            "hard_blocks": [
+              {"type": "schema", "value": {"required": ["repos"]}}
+            ],
+            "checks": [
+              {"type": "all_items_pass", "value": true}
+            ],
+            "logic": "all"
+          }
+        },
+        {
+          "couple_id": "search-xiaohongshu",
+          "prod_worker": {
+            "name": "prod-worker-xhs",
+            "task": "搜索 Zara Zhang 在小红书平台的技术相关内容。获取笔记标题、点赞数、收藏数、内容类型。结果写入 run_output/data_xhs.json",
+            "output_file": "run_output/data_xhs.json",
+            "depends_on": [],
+            "timeout_seconds": 300
+          },
+          "check_worker": {
+            "name": "check-worker-xhs",
+            "checklist": [
+              "数据是否包含笔记标题",
+              "互动数据（点赞/收藏）是否完整",
+              "内容类型分类是否合理",
+              "JSON 格式是否有效"
+            ],
+            "output_file": "run_output/check_xhs.json",
+            "timeout_seconds": 180
+          },
+          "criteria": {
+            "hard_blocks": [
+              {"type": "schema", "value": {"required": ["notes"]}}
+            ],
+            "checks": [
+              {"type": "all_items_pass", "value": true}
+            ],
+            "logic": "all"
+          }
+        }
+      ]
+    },
+    {
+      "layer": 2,
+      "parallel": false,
+      "couples": [
+        {
+          "couple_id": "analysis-report",
+          "prod_worker": {
+            "name": "prod-worker-report",
+            "task": "基于 run_output/data_github.json 和 run_output/data_xhs.json 的数据，写一份 Zara Zhang 技术影响力分析报告。包含：总体影响力评估、GitHub 数据分析、社交媒体分析、综合结论。结果写入 run_output/report.json",
+            "output_file": "run_output/report.json",
+            "depends_on": [
+              "run_output/data_github.json",
+              "run_output/data_xhs.json"
+            ],
+            "timeout_seconds": 600
+          },
+          "check_worker": {
+            "name": "check-worker-report",
+            "checklist": [
+              "报告是否包含总体影响力评估",
+              "是否引用了 GitHub 数据",
+              "是否引用了小红书数据",
+              "是否有数据来源引用",
+              "结论是否有依据",
+              "JSON 格式是否有效"
+            ],
+            "output_file": "run_output/check_report.json",
+            "timeout_seconds": 300
+          },
+          "criteria": {
+            "hard_blocks": [
+              {"type": "schema", "value": {"required": ["overview", "github_analysis", "social_analysis", "conclusion"]}}
+            ],
+            "checks": [
+              {"type": "all_items_pass", "value": true}
+            ],
+            "logic": "all"
+          }
+        }
+      ]
+    }
+  ]
+}

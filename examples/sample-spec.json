@@ -1,0 +1,10 @@
+{
+  "title": "搜索并分析 Zara Zhang 的 GitHub 影响力",
+  "description": "搜索 Zara Zhang 在 GitHub 上的开源项目数据，分析其技术影响力。\n\n具体步骤：\n1. 搜索 GitHub 仓库数据（stars、forks、贡献者）\n2. 搜索小红书平台的技术相关内容\n3. 基于前两步的数据，写一份综合分析报告",
+  "constraints": [
+    "数据需包含具体数字",
+    "报告需有数据来源引用",
+    "输出为 JSON 格式"
+  ],
+  "output_format": "JSON"
+}
