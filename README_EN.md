@@ -1,8 +1,8 @@
 **English** | [中文](README.md)
 
-# Orchestrator v2.0 · Worker-Checker Couple
+# Worker-Checker · AI Quality Assurance
 
-> AI Quality Assurance System 2.0. Upgrades v1's "one Worker does everything" to "multiple Worker-Checker Couples working in parallel."
+> Split tasks into Worker-Checker pairs — Workers build, Checkers blind-review, judge.py decides. Parallel execution, file handoffs, three-layer anti-cheat.
 > File-based handoffs between Workers. loop.py as pure-code scheduler. Three-layer anti-cheat.
 
 > "They just don't work. It's slop." — **Andrej Karpathy**, OpenAI co-founder.
@@ -64,10 +64,10 @@ Install specific platform versions (optional):
 
 ```bash
 # CodeBuddy only
-npx skills add Gavin9902/orchestrator-ai --skill orch-worker-couple
+npx skills add Gavin9902/orchestrator-ai --skill worker-checker
 
 # Claude Code only
-npx skills add Gavin9902/orchestrator-ai --skill orch-worker-couple-claude
+npx skills add Gavin9902/orchestrator-ai --skill worker-checker-claude
 ```
 
 > `npx skills` is the open-source skill manager by [Vercel Labs](https://github.com/vercel-labs/skills). It auto-downloads if not already installed.
@@ -75,7 +75,7 @@ npx skills add Gavin9902/orchestrator-ai --skill orch-worker-couple-claude
 ### Method 2: CodeBuddy SkillHub Marketplace
 
 1. Open CodeBuddy → "Skill Marketplace" on the left
-2. Search for **`orch-worker-couple`**
+2. Search for **`worker-checker`**
 3. Click "Add" to install
 
 Or visit [skillhub.cn](https://skillhub.cn) to install directly.
@@ -94,7 +94,7 @@ The AI will auto-fetch and install it locally.
 
 ```bash
 git clone https://github.com/Gavin9902/orchestrator-ai.git
-cp -r orchestrator-ai ~/.codebuddy/skills/orch-worker-couple/
+cp -r orchestrator-ai ~/.codebuddy/skills/worker-checker/
 ```
 
 ---
@@ -106,10 +106,10 @@ cp -r orchestrator-ai ~/.codebuddy/skills/orch-worker-couple/
 In your AI assistant:
 
 ```
-/orch-worker-couple
+/worker-checker
 ```
 
-Or trigger words: `couple`, `worker-couple`, `parallel Worker`
+Or trigger words: `worker-checker`, `worker-couple`, `parallel Worker`
 
 On first load, it will auto-ask which platform you're on.
 

@@ -1,6 +1,6 @@
 # Worker-Checker Couple · 协议定义
 
-> **这是 orch-worker-couple 的平台无关协议定义。**
+> **这是 worker-checker 的平台无关协议定义。**
 > 本文档定义了所有 JSON 文件格式、Action 抽象类型、状态机、以及 loop.py 的接口契约。
 > 适配器负责将抽象 Action 映射到具体平台的 API 调用。
 
@@ -167,7 +167,7 @@ Orch 翻译用户需求为此格式，只描述"要什么"，不描述"怎么做
 
 ### 多平台版本
 
-orch-worker-couple 提供 4 个平台版本，各版本硬编码自己的 `agent_config`。loop.py 中的 `DEFAULT_AGENT_CONFIG` 在各版本部署时硬编码为对应平台的值。
+worker-checker 提供 4 个平台版本，各版本硬编码自己的 `agent_config`。loop.py 中的 `DEFAULT_AGENT_CONFIG` 在各版本部署时硬编码为对应平台的值。
 
 ---
 

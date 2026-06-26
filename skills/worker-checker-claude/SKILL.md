@@ -1,11 +1,11 @@
 ---
-name: orch-worker-couple-claude
-description: Worker-Checker Couple 架构（Claude Code 版）——将复杂任务拆分为 Worker-Checker 对。硬编码 Task(permission_mode="acceptEdits") 平台映射。触发词：couple、worker-couple、拆任务、并行Worker、文件交接
+name: worker-checker-claude
+description: Worker-Checker 架构（Claude Code 版）——将复杂任务拆分为 Worker-Checker 对。硬编码 Task(permission_mode="acceptEdits") 平台映射。触发词：worker-checker、worker-couple、拆任务、并行Worker、文件交接
 ---
 
 # Worker-Checker Couple · Claude Code 版
 
-> **本文件是 orch-worker-couple 的 Claude Code 平台专用版本。**
+> **本文件是 worker-checker 的 Claude Code 平台专用版本。**
 > 核心架构见 `core/ARCHITECTURE.md`，协议定义见 `core/PROTOCOLS.md`。
 
 ---
@@ -23,7 +23,7 @@ description: Worker-Checker Couple 架构（Claude Code 版）——将复杂任
 
 ## 🪄 信使契约（The Messenger's Compact）
 
-> **这是 orch-worker-couple 的魔法层——不是规则，是叙事。**
+> **这是 worker-checker 的魔法层——不是规则，是叙事。**
 > 当 Orch 加载本 skill 时，你不是在"遵守规则"，你是在**履行一个古老的契约**。
 
 ### 你是谁

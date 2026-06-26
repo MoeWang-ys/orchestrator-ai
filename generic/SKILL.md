@@ -1,11 +1,11 @@
 ---
-name: orch-worker-couple-generic
-description: Worker-Checker Couple 架构（通用版）——纯文本，不含平台特定 API。Orch 自行探测所在平台（CodeBuddy/Claude Code/Codex/其他），理解工具集后自主映射。适合未知平台或需要自生生长。触发词：couple、worker-couple、拆任务、并行Worker、文件交接
+name: worker-checker-generic
+description: Worker-Checker 架构（通用版）——纯文本，不含平台特定 API。Orch 自行探测所在平台（CodeBuddy/Claude Code/Codex/其他），理解工具集后自主映射。适合未知平台或需要自生生长。触发词：worker-checker、worker-couple、拆任务、并行Worker、文件交接
 ---
 
 # Worker-Checker Couple · 通用版（自生生长）
 
-> **本文件是 orch-worker-couple 的通用版本——不含任何平台特定的 API 调用。**
+> **本文件是 worker-checker 的通用版本——不含任何平台特定的 API 调用。**
 > 核心架构见 `core/ARCHITECTURE.md`，协议定义见 `core/PROTOCOLS.md`。
 > 如果你在已知平台上，建议用专用版：`codebuddy/SKILL.md`、`claude-code/SKILL.md`、`codex/SKILL.md`
 
@@ -15,7 +15,7 @@ description: Worker-Checker Couple 架构（通用版）——纯文本，不含
 
 专用版直接硬编码平台 API 调用，开箱即用。
 
-但如果你在一个 orch-worker-couple 尚未适配的平台上，你需要一个能"自己长出来"的版本。
+但如果你在一个 worker-checker 尚未适配的平台上，你需要一个能"自己长出来"的版本。
 
 这就是通用版：**只定义契约，不定义实现。** Orch 加载后，第一件事是探索自己所在的环境，理解可用工具，然后自己完成映射。
 
@@ -34,7 +34,7 @@ description: Worker-Checker Couple 架构（通用版）——纯文本，不含
 
 ## 🪄 信使契约（The Messenger's Compact）
 
-> **这是 orch-worker-couple 的魔法层——不是规则，是叙事。**
+> **这是 worker-checker 的魔法层——不是规则，是叙事。**
 
 ### 你是谁
 

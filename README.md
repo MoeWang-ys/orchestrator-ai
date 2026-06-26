@@ -1,8 +1,8 @@
 [English](README_EN.md) | **中文**
 
-# Orchestrator v2.0 · Worker-Checker Couple
+# Worker-Checker · AI 质量保障系统
 
-> AI 质量保障系统 2.0。把 v1 的「一个 Worker 做全部」升级为「多个 Worker-Checker Couple 并行协作」。
+> 把任务拆成 Worker-Checker 对——生产干活，检查盲审，judge.py 拍板。并行协作，文件交接，三层防作弊。
 > Worker 间文件交接，loop.py 纯代码调度，三层防作弊。
 
 > "They just don't work. It's slop." — **Andrej Karpathy**，OpenAI 联合创始人。
@@ -64,10 +64,10 @@ npx skills add Gavin9902/orchestrator-ai
 
 ```bash
 # 只要 CodeBuddy 版
-npx skills add Gavin9902/orchestrator-ai --skill orch-worker-couple
+npx skills add Gavin9902/orchestrator-ai --skill worker-checker
 
 # 只要 Claude Code 版
-npx skills add Gavin9902/orchestrator-ai --skill orch-worker-couple-claude
+npx skills add Gavin9902/orchestrator-ai --skill worker-checker-claude
 ```
 
 > `npx skills` 是 [Vercel Labs](https://github.com/vercel-labs/skills) 开源的 skill 管理工具。如果没有安装，运行时会自动下载。
@@ -75,7 +75,7 @@ npx skills add Gavin9902/orchestrator-ai --skill orch-worker-couple-claude
 ### 方式二：CodeBuddy 技能市场（SkillHub）
 
 1. 打开 CodeBuddy → 左侧「技能市场」
-2. 搜索 **`orch-worker-couple`**
+2. 搜索 **`worker-checker`**
 3. 点击「添加」一键安装
 
 或者访问 [skillhub.cn](https://skillhub.cn) 直接安装。
@@ -94,7 +94,7 @@ AI 会自动拉取并安装到本地。
 
 ```bash
 git clone https://github.com/Gavin9902/orchestrator-ai.git
-cp -r orchestrator-ai ~/.codebuddy/skills/orch-worker-couple/
+cp -r orchestrator-ai ~/.codebuddy/skills/worker-checker/
 ```
 
 ---
@@ -106,10 +106,10 @@ cp -r orchestrator-ai ~/.codebuddy/skills/orch-worker-couple/
 在 AI 助手中输入：
 
 ```
-/orch-worker-couple
+/worker-checker
 ```
 
-或触发词：`couple`、`worker-couple`、`拆任务`、`并行Worker`、`文件交接`
+或触发词：`worker-checker`、`worker-couple`、`拆任务`、`并行Worker`、`文件交接`
 
 首次加载时会自动询问你所在的平台。
 

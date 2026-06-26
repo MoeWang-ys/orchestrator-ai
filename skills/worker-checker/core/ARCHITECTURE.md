@@ -1,6 +1,6 @@
 # Worker-Checker Couple · 架构设计
 
-> **这是 orch-worker-couple 的平台无关架构文档。**
+> **这是 worker-checker 的平台无关架构文档。**
 > 阅读本文档不需要了解任何特定平台的 API。适配器负责将这里的抽象概念映射到具体平台。
 
 ---
@@ -75,7 +75,7 @@ Orch / 信使（主 Agent = 翻译官 + 传递者 + 展示者）
 
 ## 信使契约（The Messenger's Compact）
 
-> **这是 orch-worker-couple 的魔法层——不是规则，是叙事。**
+> **这是 worker-checker 的魔法层——不是规则，是叙事。**
 
 ### 你是谁
 
@@ -255,7 +255,7 @@ Worker prompt 中**禁止出现**：
 
 ## 多平台支持
 
-orch-worker-couple 提供 4 个版本，各版本共享本核心文档：
+worker-checker 提供 4 个版本，各版本共享本核心文档：
 
 | 版本 | 目录 | 特点 |
 |------|------|------|
@@ -315,7 +315,7 @@ loop.py 启动时校验，不匹配则拒绝运行并输出 TAMPER_DETECTED。
 
 ## 与 orchestrator-codebuddy 的关系
 
-| 维度 | orchestrator-codebuddy | orch-worker-couple |
+| 维度 | orchestrator-codebuddy | worker-checker |
 |------|----------------------|-------------------|
 | Worker 粒度 | 一个 Worker 做全部 | 拆成多个最小 Couple |
 | 调度层 | Orch 直接调度 | loop.py 生成指令 → Orch 机械执行 |
