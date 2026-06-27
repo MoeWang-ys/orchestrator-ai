@@ -51,7 +51,7 @@ Orch 翻译用户需求为此格式，只描述"要什么"，不描述"怎么做
           "couple_id": "search-github",
           "prod_worker": {
             "name": "prod-worker-github",
-            "task": "搜索 Zara Zhang GitHub 数据，写入 run_output/data_github.json",
+            "task": "获取 Zara Zhang 在 GitHub 上的公开仓库和 star 数据",
             "output_file": "run_output/data_github.json",
             "depends_on": [],
             "timeout_seconds": 300
@@ -88,7 +88,7 @@ Orch 翻译用户需求为此格式，只描述"要什么"，不描述"怎么做
 | `layers[].parallel` | 该层内的 Couple 是否可并行执行 |
 | `couples[].couple_id` | 唯一标识符 |
 | `prod_worker.name` | Worker 名称（用于 Team Mode 命名） |
-| `prod_worker.task` | 任务描述（不含验收标准） |
+| `prod_worker.task` | 目标描述（纯目标，不含实现方式），Worker 自主决定如何实现 |
 | `prod_worker.output_file` | 产出文件路径 |
 | `prod_worker.depends_on` | 依赖文件列表 |
 | `prod_worker.timeout_seconds` | 超时秒数（默认 300） |
@@ -146,10 +146,68 @@ Orch 翻译用户需求为此格式，只描述"要什么"，不描述"怎么做
 3. **不信任 Worker** — checklist 不应包含"Worker 是否做了 X"这类词，而是直接验证结果
 4. **保持 spec 精度** — spec 要求遮盖姓名，checklist 就写"是否还有可见的人名"，不写"像素 x=222-393 是否白色"
 
+## 检查 Worker 的输入
+
+Checker 的输入不包含 Worker 的执行步骤、日志或任务描述。它只接收：
+
+- **spec.json**（用户目标和约束）
+- **产物文件路径**（Worker 交付的文件）
+
+Checker 自行决定如何验证目标是否在产物中达成。
+
+---
+
+## retry_context.json 格式
+
+> Judge 不通过时，loop.py 将重试上下文打包为 `retry_context.json`，供 Worker 下次执行时参考。
+
+```json
+{
+  "spec": {
+    "title": "遮盖 Excel 截图敏感列",
+    "description": "将图片中的姓名、工号、联系电话、邮箱四列用白色马赛克遮盖",
+    "constraints": ["保留工具栏", "保留表头行", "非敏感列不动"]
+  },
+  "original_file": "run_output/original.png",
+  "last_output": "run_output/masked.png",
+  "check_result": {
+    "couple_id": "mask-columns",
+    "worker": "check-worker-mask",
+    "checklist_results": [
+      {"item": "图片中是否还有可见的人名？", "result": "FAIL", "detail": "A 列（x=72-220）仍可见中文姓名"},
+      {"item": "图片中是否还有可见的工号？", "result": "PASS", "detail": ""}
+    ]
+  },
+  "judge_result": "FAIL",
+  "judge_detail": "hard_block 'all_items_pass' 不满足: 1/5 项 FAIL"
+}
+```
+
+| 字段 | 说明 |
+|------|------|
+| `spec` | 完整的 spec.json 内容（原始目标 + 约束） |
+| `original_file` | 当前 Worker 修改前的原始文件路径 |
+| `last_output` | Worker 上次交付的文件路径 |
+| `check_result` | Checker 的各检查项结果（含具体失败原因） |
+| `judge_result` | Judge 的最终判定 |
+| `judge_detail` | 判定未通过的具体原因 |
+
+### 重试流程
+
+```
+1. judge 输出 FAIL
+2. loop.py 打包 retry_context.json（spec + 原始文件 + 上次产出 + 检查结果 + 判定）
+3. loop.py round+1，生成新的 next_actions.json，将 retry_context.json 路径加入 Worker prompt
+4. Worker 读取 retry_context.json，根据失败原因修正实现
+5. Worker 写新文件
+6. check-worker 再次检查
+7. judge 重新判定
+```
+
 ### Checker prompt 模板
 
 ```
-你是检查 Worker。你的任务是验证以下目标是否达成。
+你是检查 Worker。你的任务是验证以下目标是否在产物中达成。
 
 ## 用户需求（spec）
 {spec}
@@ -160,13 +218,12 @@ Orch 翻译用户需求为此格式，只描述"要什么"，不描述"怎么做
 ## 产物文件
 {prod_output_file}
 
-## 检查清单
-{checklist}
-
-逐项检查后，将结果写入 {check_output_file}。
+逐项检查 spec 中的每个目标是否在产物文件中实现，
+将结果写入 {check_output_file}。
 ```
 
-> **关键**：Checker 不读 Worker 的执行日志，不验证 Worker 的步骤，只验证 spec 目标是否在产物中达成。
+> **关键：Checker 不读 Worker 的执行日志，不验证 Worker 的步骤，只验证 spec 目标是否在产物中达成。**
+> Checker 自行决定如何检查，不接收预设的 checklist。
 
 ---
 

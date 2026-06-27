@@ -53,8 +53,32 @@ Orch / 信使（主 Agent = 翻译官 + 传递者 + 展示者）
 |------|------|-----------|-----------|
 | Orch（信使） | LLM Agent | 翻译需求为 spec、读取并机械执行 next_actions.json、运行 loop.py、展示进度和结果 | 生成/修改 next_actions、拆任务、碰 judge、跳过 action |
 | loop.py（建筑师） | Python 脚本 | 读 task_graph、生成 next_actions.json、运行 judge.py、写审计日志、推进状态机 | 调用子 Agent、生成 task_graph、改任务内容、改 judge 结果 |
-| PM Couple | LLM Agent × 2 | 拆解任务、生成 task_graph | 执行具体任务、定验收标准 |
-| 生产 Worker（工匠） | LLM Agent | 执行单一任务、写文件 | 评判、拆任务、定标准 |
+| PM Couple | LLM Agent × 2 | 拆解任务（产出目标描述）、生成 task_graph | 执行具体任务、定验收标准 |
+| 生产 Worker（工匠） | LLM Agent | 理解目标、自主选择实现方案、执行任务、写文件 | 评判、拆任务、定标准、被给定实现步骤 |
+
+### PM Couple：给目标，不给 todo
+
+PM Couple 的任务拆解原则：
+
+1. **产出目标描述，不是执行步骤** — `task` 字段只写"获取 Zara Zhang 的 GitHub 数据"，不写"搜索 GitHub API 然后写文件到 xxx.json"
+2. **Worker 自主决策** — Worker 收到目标后，自行决定用什么工具、什么方式、写到哪里
+3. **目标粒度 = 一个 Worker 的产出** — 如果目标被拆成"先搜数据再分析"，说明需要两个 Worker、各一个目标
+4. **checklist 从 spec 推导** — checklist 基于 spec.json 的目标，不基于 Worker 的 task 描述
+
+### 重试上下文
+
+Judge 不通过时，Worker 不能盲猜失败原因。重试时传入完整上下文：
+
+```
+retry_context.json:
+  ├── spec（原始目标）
+  ├── original_file（修改前原始文件）
+  ├── last_output（Worker 上次产出）
+  ├── check_result（各检查项结果）
+  └── judge_result（判定结论）
+```
+
+Worker 读取后知道自己哪步错了、基于什么原始文件做的、需要改什么。
 | 检查 Worker | LLM Agent | 逐条审查、写打分 | 执行任务、定标准 |
 | judge.py（判官） | Python 脚本 | 比对标准 vs 打分，输出 PASS/FAIL | 无（纯代码，不可收买） |
 
@@ -164,8 +188,13 @@ Couple = 1 生产 Worker + 1 检查 Worker + 1 次 judge.py
 ### Prompt 约束
 
 Worker prompt 末尾必须包含写文件指令：
+
+Worker prompt 中引导 Worker 保留原始文件备份用于后续重试对比：
 ```
 完成后将结果写入 {output_path}，然后返回一句话摘要和文件路径。
+如果之前已经有产出文件 {last_output}，请阅读 retry_context.json 了解失败原因，在 {last_output} 基础上修正而不是从头重做。
+
+原始文件 {original_file} 是修改前的版本，请勿覆盖。
 ```
 
 Worker prompt 中**禁止出现**：
